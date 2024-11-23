@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next-Gen IMEI Lookup Tool</title>
+    <!-- Google Fonts for Signature Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            /* Plain Background Color */
+            background-color: #1a1a2e; /* Dark Blue Shade */
+
+            /* Minimalist Shapes */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Changed to flex-start to align content to the top */
+            min-height: 100vh;
+            color: #ffffff;
+            padding: 20px;
+            overflow: hidden; /* Prevent scrolling when overlay is active */
+
+            /* Optional: Add subtle gradient */
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+
+            padding-top: 60px; /* Added top padding to prevent overlap */
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            position: fixed; /* Keeps the navbar fixed at the top */
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(24, 24, 55, 0.95); /* Slightly different shade for distinction */
+            color: #ffffff;
+            padding: 10px 20px; /* Reduced padding for a thinner navbar */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            z-index: 1002; /* Ensure it's above other elements */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px; /* Set a fixed height */
+        }
+
+        .navbar .logo a {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00d2ff;
+            text-decoration: none;
+        }
+
+        .navbar .nav-links a {
+            color: #00d2ff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1em;
+            position: relative;
+        }
+
+        .navbar .nav-links a::after {
+            content: '';
+            display: block;
+            width: 0%;
+            height: 2px;
+            background: #00d2ff;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+
+        .navbar .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Mute Sounds Section */
+        #muteSoundsContainer {
+            position: absolute;
+            top: 80px; /* Adjusted to sit below the navbar */
+            right: 20px;
+            color: #ffffff;
+            z-index: 1001; /* Slightly below the navbar */
+        }
+
+        /* IMEI Lookup Tool Widget Title */
+        h1 {
+            margin-top: 20px; /* Ensures it's below any top elements */
+            font-size: 2.5em;
+            color: #00d2ff;
+            text-shadow: 0 0 20px #00d2ff, 0 0 10px #0078b5;
+            margin-bottom: 30px;
+            animation: bounce 1s infinite alternate;
+            text-align: center; /* Center the title */
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Lookup Box Styles */
+        .lookup-box, .calculator-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            animation: fadeIn 1.5s ease-in-out;
+            width: 100%;
+        }
+
+        #imeiInput, #imeiInputFree, #serviceSelect, #calculatorInput {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: #24243e;
+            color: #ffffff;
+            font-size: 1.5em;
+            text-align: center;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        #imeiInput:focus, #imeiInputFree:focus, #serviceSelect:focus, #calculatorInput:focus {
+            border: 2px solid #00d2ff;
+            box-shadow: 0 0 20px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        #serviceSelect {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: #24243e;
+            color: #ffffff;
+            font-size: 1.5em;
+            text-align: center;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        /* Button Styles */
+        button {
+            padding: 12px 25px;
+            font-size: 1.2em;
+            color: #ffffff;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: 0.3s;
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+        }
+
+        button:hover {
+            background: #00d2ff;
+            color: #1a1a2e;
+            transform: scale(1.05);
+        }
+
+        button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Outline Button Styles */
+        .outline-button {
+            background: transparent;
+            border: 2px solid #00d2ff;
+            color: #00d2ff;
+            box-shadow: none;
+        }
+
+        .outline-button:hover {
+            background: #00d2ff;
+            color: #1a1a2e;
+            border: 2px solid #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.7);
+        }
+
+        /* Result Box Styles */
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(26, 26, 46, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            animation: fadeIn 0.8s ease-in-out;
+            position: relative;
+            text-align: left; /* Improved readability */
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        h2 {
+            color: #00d2ff;
+            text-shadow: 0 0 20px #00d2ff, 0 0 10px #0078b5;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        #error, #calculatorError {
+            color: #ff3e3e;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Spinner Styles */
+        .spinner {
+            border: 4px solid rgba(0, 210, 255, 0.2);
+            border-top: 4px solid #00d2ff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Calculator Box Styles */
+        .calculator-box {
+            background: rgba(40, 40, 60, 0.95);
+            padding: 0;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+            width: 100%;
+        }
+
+        .calculator-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(30, 30, 46, 0.95);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .calculator-header h3 {
+            color: #00d2ff;
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .calculator-header p {
+            color: #ffffff;
+            margin: 5px 0 0 0;
+            font-size: 0.9em;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+            font-size: 1.5em;
+        }
+
+        .arrow.down {
+            transform: rotate(180deg);
+        }
+
+        .calculator-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 20px;
+        }
+
+        .calculator-content.expanded {
+            max-height: 1000px; /* Arbitrary large value to allow full expansion */
+            padding: 20px;
+        }
+
+        .calculator-content input, .calculator-content button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+        }
+
+        /* User Information Section */
+        .user-info {
+            margin-top: 30px;
+            text-align: left;
+            background: rgba(40, 40, 60, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            animation: fadeIn 1.5s ease-in-out;
+            width: 100%; /* Ensure full width inside the container */
+        }
+
+        .user-info h4 {
+            color: #00d2ff;
+            margin-bottom: 10px;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        /* Footer Styles */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #888888;
+        }
+
+        .footer a {
+            color: #00d2ff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .language-selector {
+            margin-top: 10px;
+        }
+
+        /* Mute Sounds Option */
+        #muteSoundsContainer {
+            position: absolute;
+            top: 80px; /* Adjusted to sit below the navbar */
+            right: 20px;
+            color: #ffffff;
+            z-index: 1001; /* Slightly below the navbar */
+        }
+
+        #muteSounds {
+            margin-left: 5px;
+        }
+
+        /* Discreet IMEI Generator Link Styles */
+        .imei-generator-link {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.85em; /* Slightly smaller font size */
+            color: #bbbbbb; /* Subtle color to blend with the theme */
+            text-decoration: none; /* Remove underline for discretion */
+            transition: color 0.3s ease;
+        }
+
+        .imei-generator-link:hover {
+            color: #00d2ff; /* Highlight color on hover for visibility */
+            text-decoration: underline; /* Underline on hover to indicate interactivity */
+        }
+
+        /* Optional: Focus Styles for Accessibility */
+        .imei-generator-link:focus {
+            outline: 2px dashed #00d2ff;
+            outline-offset: 2px;
+        }
+
+        /* Login Overlay Styles */
+        #pinOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1003; /* Higher than navbar */
+        }
+
+        #pinContainer {
+            background: rgba(30, 30, 46, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        #userSelect, #pinInput {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            background: #24243e;
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+            outline: none;
+        }
+
+        #userSelect:focus, #pinInput:focus {
+            border: 2px solid #00d2ff;
+            box-shadow: 0 0 20px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        #pinSubmitButton {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.7);
+        }
+
+        #pinSubmitButton:hover {
+            background: #00d2ff;
+            color: #1a1a2e;
+            transform: scale(1.05);
+        }
+
+        /* Error Message Styles */
+        #pinError {
+            color: #ff3e3e;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                max-width: 95%;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            #imeiInput, #imeiInputFree, #serviceSelect, #calculatorInput {
+                font-size: 1.2em;
+            }
+
+            p {
+                font-size: 0.9em;
+            }
+
+            .calculator-steps, .user-info, .statistics {
+                font-size: 0.9em;
+            }
+
+            .calculator-header h3 {
+                font-size: 1.2em;
+            }
+
+            .calculator-header p {
+                font-size: 0.8em;
+            }
+        }
+
+        /* Custom Styles for optgroups */
+        .optgroup-stores {
+            color: #00d2ff; /* Text color for Stores group label */
+            /* Note: Background-color may not be consistently applied across browsers */
+        }
+
+        .optgroup-accounts {
+            color: #ff9800; /* Text color for Accounts group label */
+            /* Note: Background-color may not be consistently applied across browsers */
+        }
+
+        /* Optional: Enhance option appearance */
+        #userSelect option {
+            background-color: #24243e; /* Background for options */
+            color: #ffffff; /* Text color for options */
+        }
+
+        /* Optional: Change background on hover for better visibility */
+        #userSelect option:hover {
+            background-color: #33334d;
+        }
+
+        /* Copy Button Styles */
+        .copy-button {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            background: #0078b5;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #ffffff;
+            transition: background 0.3s;
+            margin-left: 10px;
+        }
+
+        .copy-button:hover {
+            background: #00d2ff;
+        }
+
+        .copy-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Success Message Styles */
+        #copySuccess {
+            color: #00ff00;
+            margin-left: 10px;
+            display: none;
+            font-size: 0.9em;
+        }
+
+        /* Signature Font Style */
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            opacity: 0.7;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        /* Adding Simple Shapes and Silhouettes */
+        /* Phone Silhouette SVG */
+        .phone-silhouette {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 400px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDIwMCA0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiMwMDAwMDAiLz4KICA8cmVjdCB4PSIxMCIgeT0iNTAiIHdpZHRoPSI5MCIgaGVpZ2h0PSIzMCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjEwIiB5PSI4MCIgd2lkdGg9IjkwIiBoZWlnaHQ9IjEyIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHJlY3QgeD0iMTUiIHk9IjEzMCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjEyIiBmaWxsPSIjZmZmZmZmIi8+CiAgPHJlY3QgeD0iMTUiIHk9IjEzMCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjEyIiBmaWxsPSIjZmZmZmZmIi8+CiAgPHJlY3QgeD0iMTUiIHk9IjEzMCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjEyIiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==') no-repeat center;
+            background-size: contain;
+            opacity: 0.1; /* Very subtle silhouette */
+            transform: translate(-50%, -50%);
+            pointer-events: none; /* Click-through */
+            z-index: 0; /* Behind the overlay */
+        }
+
+        /* Adding Simple Circles as Shapes */
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 210, 255, 0.2);
+            z-index: 0;
+        }
+
+        .circle.small {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+        }
+
+        .circle.medium {
+            width: 150px;
+            height: 150px;
+            bottom: 15%;
+            right: 20%;
+        }
+
+        .circle.large {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 5%;
+        }
+
+        /* Container Styles */
+        .container {
+            background: rgba(26, 26, 46, 0.9); /* Darker semi-transparent background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto; /* Center the container */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1; /* Ensure it appears above background shapes */
+        }
+    </style>
+    <!-- Audio Files -->
+    <audio id="clickSound" src="https://yourdomain.com/path/to/click.mp3" preload="auto"></audio>
+    <audio id="errorSound" src="https://yourdomain.com/path/to/error.mp3" preload="auto"></audio>
+</head>
+<body>
+    <!-- Adding Simple Shapes -->
+    <div class="circle small"></div>
+    <div class="circle medium"></div>
+    <div class="circle large"></div>
+
+    <!-- Phone Silhouette -->
+    <div class="phone-silhouette"></div>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="logo">
+            <a href="#">GVTech Hub</a>
+        </div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Services</a>
+            <a href="#">Contact</a>
+        </div>
+    </div>
+
+    <!-- Login Overlay -->
+    <div id="pinOverlay">
+        <div id="pinContainer">
+            <h2>Enter PIN to Access Tool</h2>
+            <select id="userSelect" aria-label="Select User">
+                <!-- Stores Group -->
+                <optgroup label="Stores" class="optgroup-stores">
+                    <option value="GVTech Hub">GVTech Hub</option>
+                    <option value="Rome Store">Rome Store</option>
+                </optgroup>
+                <!-- Accounts Group -->
+                <optgroup label="Accounts" class="optgroup-accounts">
+                    <option value="Chris">Chris</option>
+                    <option value="Jeremy">Jeremy</option>
+                    <option value="Joseph">Joseph</option>
+                    <option value="Camery">Camery</option>
+                    <option value="Orly">Orly</option>
+                    <option value="Ryan">Ryan</option>
+                </optgroup>
+            </select>
+            <input type="password" id="pinInput" placeholder="Enter PIN" maxlength="6" aria-label="Enter PIN">
+            <button id="pinSubmitButton" onclick="checkPin()" aria-label="Submit PIN">Submit</button>
+            <div id="pinError">Incorrect PIN. Please try again.</div>
+        </div>
+    </div>
+
+    <!-- Mute Sounds Section -->
+    <div id="muteSoundsContainer">
+        <label>
+            <input type="checkbox" id="muteSounds"> Mute Sounds
+        </label>
+        <!-- Discreet IMEI Generator Link -->
+        <a href="https://www.imei.info/imei-generator/" id="imeiGeneratorLink" target="_blank" class="imei-generator-link" aria-label="Open IMEI Generator">IMEI Generator</a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1>IMEI Lookup Tool</h1>
+
+        <!-- Paid IMEI Lookup Section -->
+        <div class="lookup-box">
+            <h3>Paid IMEI Lookup</h3>
+            <select id="serviceSelect" aria-label="Select Service">
+                <option value="0" selected>Basic IMEI Check | $0.02</option>
+                <option value="2">APPLE: Carrier & Lock Status & FMI | $0.32</option>
+                <option value="9">APPLE: FMI Status [ON / OFF] | $0.08</option>
+                <option value="11">APPLE: Sold By & Coverage | $2.8</option>
+                <option value="12">APPLE: Warranty Check | $0.02</option>
+                <option value="3">BLACKLIST: Premium Check | $0.56</option>
+                <option value="27">BLACKLIST: Simple Check | $0.08</option>
+                <option value="80">GENERIC FREE: Sony Info Check | $0.08</option>
+                <option value="104">GENERIC: Apple Simlock Check via IMEI+SN | $0.2</option>
+                <option value="46">GENERIC: Asus Info Check | $0.32</option>
+                <option value="50">GENERIC: Dogee Info Check | $0.24</option>
+                <option value="54">GENERIC: Google Pixel Info Check | $0.32</option>
+                <option value="56">GENERIC: Honor Info Check | $0.32</option>
+                <option value="58">GENERIC: Huawei Info Check | $0.48</option>
+                <option value="66">GENERIC: LG Info Check | $0.32</option>
+                <option value="68">GENERIC: Motorola Info Check | $0.32</option>
+                <option value="70">GENERIC: OnePlus Info Check | $0.16</option>
+                <option value="72">GENERIC: Oppo Info Check | $0.16</option>
+                <option value="74">GENERIC: Realme Info Check | $0.16</option>
+                <option value="4">GENERIC: Samsung Info Check | $0.56</option>
+                <option value="76">GENERIC: Samsung Info Check & Knox Info | $0.56</option>
+                <option value="90">GENERIC: Tecno Info Check | $0.24</option>
+                <option value="85">GENERIC: Xiaomi Full Info | $0.2</option>
+                <option value="84">GENERIC: Xiaomi Info Check | $0.2</option>
+                <option value="86">GENERIC: Xiaomi Mi Lock Info Check | $0.08</option>
+                <option value="88">GENERIC: ZTE Info Check | $0.24</option>
+                <option value="31">STATUS: T-Mobile USA Check | $0.24</option>
+                <option value="32">STATUS: Verizon USA Check | $0.16</option>
+            </select>
+            <input type="text" id="imeiInput" placeholder="Enter 15-digit IMEI" onkeypress="return isNumber(event)" maxlength="15" aria-label="Enter IMEI">
+            <button onclick="lookupIMEI()" aria-label="Lookup IMEI">Lookup</button>
+        </div>
+
+        <!-- Free IMEI Lookup Section -->
+        <div class="lookup-box">
+            <h3>Free IMEI Lookup</h3>
+            <input type="text" id="imeiInputFree" placeholder="Enter 15-digit IMEI" onkeypress="return isNumber(event)" maxlength="15" aria-label="Enter IMEI for Free Lookup">
+            <button onclick="lookupFreeIMEI()" aria-label="Free Lookup">Free Lookup</button>
+        </div>
+
+        <!-- IMEI Calculator Section (Collapsible) -->
+        <div class="calculator-box">
+            <div class="calculator-header" onclick="toggleCalculator()">
+                <div>
+                    <h3>IMEI Calculator</h3>
+                    <p>The last number of the IMEI is a check digit. The Check Digit is calculated according to Luhn formula</p>
+                </div>
+                <div class="arrow" id="calculatorArrow">&#9660;</div>
+            </div>
+            <div class="calculator-content" id="calculatorContent">
+                <input type="text" id="calculatorInput" placeholder="Enter IMEI (14 digits)" onkeypress="return isNumber(event)" maxlength="14" aria-label="Enter 14-digit IMEI">
+                <button onclick="calculateCheckDigit()" aria-label="Calculate Check Digit">Calculate Check Digit</button>
+                <button onclick="copyIMEI()" class="outline-button" aria-label="Copy IMEI to Clipboard">Copy IMEI</button>
+                <div id="calculatorError">Please enter a valid 14 or 15-digit IMEI number.</div>
+                <div id="calculatorResult" class="result-box"></div>
+
+                <div class="calculator-steps">
+                    <h4>How the Check Digit is Calculated (Luhn Formula)</h4>
+                    <p>The last number of the IMEI is a check digit.</p>
+                    <p>The Check Digit is calculated according to the Luhn formula.</p>
+                    <p><strong>Example IMEI:</strong> 35514949095968 = 7</p>
+                    <p>IMEI: 351451-20-840121-6</p>
+
+                    <h4>Calculation Steps:</h4>
+                    <p><strong>Step 1:</strong> Starting from the right, double every second digit.</p>
+                    <p>(5x2, 4x2, 1x2, 0x2, 4x2, 1x2, 1x2) = (10, 8, 2, 0, 8, 2, 2)</p>
+
+                    <p><strong>Step 2:</strong> Sum the digits. If a product is greater than 9, add the digits of the product.</p>
+                    <p>(1+0+8+2+0+8+2+2) + (3+1+5+2+8+0+2 ) = 44</p>
+
+                    <p><strong>Step 3:</strong> The check digit is the number that makes the total sum divisible by 10.</p>
+                    <p>Luhn Digit: 6</p>
+                    <p>Final IMEI: 351451-20-840121-6</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Information Section -->
+        <div class="user-info" id="userInfo">
+            <!-- Filled by JavaScript -->
+        </div>
+
+        <!-- Result Box -->
+        <div class="result-box" id="result">
+            <h2>Device Information</h2>
+            <div id="deviceData"></div>
+            <div class="copy-container">
+                <button onclick="copyToClipboard()" class="copy-button" aria-label="Copy IMEI to Clipboard">Copy</button>
+                <span id="copySuccess">Copied!</span>
+            </div>
+            <button onclick="clearFields()">Clear</button>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error"></div>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            © GVTech Hub 2024
+            <div class="signature">Widget Made by Chris Loetz</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Section -->
+    <script>
+        // Hashing Function for PINs (Note: Client-side hashing is not secure)
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0; // Convert to 32bit integer
+            }
+            return hash;
+        }
+
+        // User Data with Hashed PINs
+        const users = {
+            'GVTech Hub': hashCode('881'),
+            'Rome Store': hashCode('1160'),
+            'Chris': hashCode('1881'),
+            'Jeremy': hashCode('1491'),
+            'Joseph': hashCode('8581'),
+            'Camery': hashCode('8581'),
+            'Orly': hashCode('881'),
+            'Ryan': hashCode('881')
+        };
+
+        // PIN Verification Function
+        function checkPin() {
+            const user = document.getElementById('userSelect').value;
+            const pin = document.getElementById('pinInput').value;
+            const pinError = document.getElementById('pinError');
+
+            if (users[user] === hashCode(pin)) {
+                document.getElementById('pinOverlay').style.display = 'none';
+                document.body.style.overflow = 'auto'; // Enable scrolling
+                playSound('clickSound');
+                displayUserInfo(user); // Display user information upon successful login
+            } else {
+                pinError.style.display = 'block';
+                playSound('errorSound');
+            }
+        }
+
+        // Input Validation to Allow Only Numbers
+        function isNumber(evt) {
+            const charCode = evt.which ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+            return true;
+        }
+
+        // Function to Play Sounds
+        function playSound(soundId) {
+            const mute = document.getElementById('muteSounds').checked;
+            if (mute) return;
+            const sound = document.getElementById(soundId);
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play();
+            }
+        }
+
+        // IMEI Lookup Function (Paid)
+        async function lookupIMEI() {
+            const imei = document.getElementById('imeiInput').value.trim();
+            const serviceId = document.getElementById('serviceSelect').value;
+            const resultBox = document.getElementById('result');
+            const deviceData = document.getElementById('deviceData');
+            const errorBox = document.getElementById('error');
+            errorBox.style.display = 'none';
+
+            if (imei.length !== 15 || !/^\d{15}$/.test(imei)) {
+                errorBox.innerText = "Please enter a valid 15-digit IMEI number.";
+                errorBox.style.display = 'block';
+                playSound('errorSound');
+                resultBox.style.display = 'none';
+                return;
+            }
+
+            const API_KEY = '8187193c-1ecd-4cb4-82f5-bf184f7d2580';
+            
+            try {
+                deviceData.innerHTML = `<div class="spinner"></div>`;
+                resultBox.style.display = 'block';
+
+                const url = `https://dash.imei.info/api/check/${serviceId}/?imei=${imei}&API_KEY=${API_KEY}`;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Service not found or unsupported request: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log(data); // Log the response to understand its structure.
+
+                // Access the nested result object
+                const result = data.result;
+                deviceData.innerHTML = `
+                    <p><strong>Model:</strong> ${result.model || 'N/A'}</p>
+                    <p><strong>Brand:</strong> ${result.brand_name || 'N/A'}</p>
+                    <p><strong>IMEI:</strong> ${result.imei || 'N/A'}</p>
+                `;
+                playSound('clickSound');
+            } catch (error) {
+                errorBox.innerText = `Lookup failed: ${error.message}`;
+                errorBox.style.display = 'block';
+                playSound('errorSound');
+                resultBox.style.display = 'none';
+            }
+        }
+
+        // IMEI Lookup Function (Free)
+        async function lookupFreeIMEI() {
+            const imei = document.getElementById('imeiInputFree').value.trim();
+            const resultBox = document.getElementById('result');
+            const deviceData = document.getElementById('deviceData');
+            const errorBox = document.getElementById('error');
+            errorBox.style.display = 'none';
+
+            if (imei.length !== 15 || !/^\d{15}$/.test(imei)) {
+                errorBox.innerText = "Please enter a valid 15-digit IMEI number.";
+                errorBox.style.display = 'block';
+                playSound('errorSound');
+                resultBox.style.display = 'none';
+                return;
+            }
+
+            try {
+                deviceData.innerHTML = `<div class="spinner"></div>`;
+                resultBox.style.display = 'block';
+
+                // Perform free lookup by navigating to IMEI.info page
+                window.open(`https://www.imei.info/?imei=${imei}`, '_blank');
+                playSound('clickSound');
+            } catch (error) {
+                errorBox.innerText = `Lookup failed: ${error.message}`;
+                errorBox.style.display = 'block';
+                playSound('errorSound');
+                resultBox.style.display = 'none';
+            }
+        }
+
+        // Clear All Input Fields and Results
+        function clearFields() {
+            document.getElementById('imeiInput').value = '';
+            document.getElementById('imeiInputFree').value = '';
+            document.getElementById('calculatorInput').value = '';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('deviceData').innerHTML = '';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('calculatorResult').style.display = 'none';
+            document.getElementById('calculatorResult').innerHTML = '';
+            document.getElementById('calculatorError').style.display = 'none';
+            document.getElementById('copySuccess').style.display = 'none';
+            playSound('clickSound');
+        }
+
+        // IMEI Calculator Functions
+        function calculateCheckDigit() {
+            const imei14 = document.getElementById('calculatorInput').value.trim();
+            const calculatorResult = document.getElementById('calculatorResult');
+            const calculatorError = document.getElementById('calculatorError');
+
+            if (imei14.length !== 14 || !/^\d{14}$/.test(imei14)) {
+                calculatorError.innerText = "Please enter a valid 14-digit IMEI number.";
+                calculatorError.style.display = 'block';
+                calculatorResult.style.display = 'none';
+                playSound('errorSound');
+                return;
+            }
+
+            calculatorError.style.display = 'none';
+
+            const checkDigit = getLuhnCheckDigit(imei14);
+            calculatorResult.innerHTML = `
+                <p><strong>Entered IMEI (14 digits):</strong> ${formatIMEI(imei14)}</p>
+                <p><strong>Calculated Check Digit:</strong> ${checkDigit}</p>
+                <p><strong>Complete IMEI:</strong> ${formatIMEI(imei14 + checkDigit)}</p>
+            `;
+            calculatorResult.style.display = 'block';
+            playSound('clickSound');
+        }
+
+        function copyIMEI() {
+            const calculatorResult = document.getElementById('calculatorResult');
+            if (!calculatorResult.innerText) return;
+
+            // Extract the complete IMEI from the calculatorResult
+            const imeiMatch = calculatorResult.innerText.match(/Complete IMEI:\s*(\d{6}-\d{2}-\d{6}-\d)/);
+            const imei = imeiMatch ? imeiMatch[1].replace(/-/g, '') : '';
+
+            if (!imei) return;
+
+            navigator.clipboard.writeText(imei).then(() => {
+                const copySuccess = document.getElementById('copySuccess');
+                copySuccess.style.display = 'inline';
+                setTimeout(() => {
+                    copySuccess.style.display = 'none';
+                }, 2000);
+                playSound('clickSound');
+            }).catch(() => {
+                // Fallback in case Clipboard API fails
+                alert('Failed to copy IMEI.');
+                playSound('errorSound');
+            });
+        }
+
+        function getLuhnCheckDigit(imei14) {
+            let sum = 0;
+            for (let i = 0; i < imei14.length; i++) {
+                let digit = parseInt(imei14[i]);
+                // Double every second digit from the right (even index in 0-based)
+                if ((i % 2) === 1) {
+                    digit *= 2;
+                    if (digit > 9) digit -= 9;
+                }
+                sum += digit;
+            }
+            const mod = sum % 10;
+            return mod === 0 ? 0 : 10 - mod;
+        }
+
+        function formatIMEI(imei) {
+            return `${imei.slice(0, 6)}-${imei.slice(6, 8)}-${imei.slice(8, 14)}-${imei.slice(-1)}`;
+        }
+
+        // Copy IMEI to Clipboard Function
+        function copyToClipboard() {
+            const imeiText = document.getElementById('deviceData').innerText;
+            if (!imeiText) return;
+
+            // Extract the IMEI number from the deviceData
+            const imeiMatch = imeiText.match(/IMEI:\s*([\d-]+)/);
+            const imei = imeiMatch ? imeiMatch[1].replace(/-/g, '') : '';
+
+            if (!imei) return;
+
+            navigator.clipboard.writeText(imei).then(() => {
+                const copySuccess = document.getElementById('copySuccess');
+                copySuccess.style.display = 'inline';
+                setTimeout(() => {
+                    copySuccess.style.display = 'none';
+                }, 2000);
+                playSound('clickSound');
+            }).catch(() => {
+                // Fallback in case Clipboard API fails
+                alert('Failed to copy IMEI.');
+                playSound('errorSound');
+            });
+        }
+
+        // Toggle Calculator Dropdown Function
+        function toggleCalculator() {
+            const content = document.getElementById('calculatorContent');
+            const arrow = document.getElementById('calculatorArrow');
+            content.classList.toggle('expanded');
+            arrow.classList.toggle('down');
+        }
+
+        // Display User Information Function
+        function displayUserInfo(user) {
+            const userInfoDiv = document.getElementById('userInfo');
+            const date = new Date();
+            const formattedDate = date.toLocaleDateString();
+            const formattedTime = date.toLocaleTimeString();
+
+            // Get Device Info
+            const deviceInfo = navigator.userAgent;
+
+            // Fetch IP Address
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ip = data.ip;
+                    userInfoDiv.innerHTML = `
+                        <h4>User Information</h4>
+                        <p><strong>User:</strong> ${user}</p>
+                        <p><strong>Date:</strong> ${formattedDate}</p>
+                        <p><strong>Time:</strong> ${formattedTime}</p>
+                        <p><strong>IP Address:</strong> ${ip}</p>
+                        <p><strong>Device:</strong> ${deviceInfo}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error fetching IP:', error);
+                    userInfoDiv.innerHTML = `
+                        <h4>User Information</h4>
+                        <p><strong>User:</strong> ${user}</p>
+                        <p><strong>Date:</strong> ${formattedDate}</p>
+                        <p><strong>Time:</strong> ${formattedTime}</p>
+                        <p><strong>IP Address:</strong> Unable to fetch</p>
+                        <p><strong>Device:</strong> ${deviceInfo}</p>
+                    `;
+                });
+        }
+
+        // Add event listeners for Enter key submissions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle Enter key for PIN input
+            const pinInput = document.getElementById('pinInput');
+            pinInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    checkPin();
+                }
+            });
+
+            // Handle Enter key for Paid IMEI input
+            const imeiInput = document.getElementById('imeiInput');
+            imeiInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    lookupIMEI();
+                }
+            });
+
+            // Handle Enter key for Free IMEI input
+            const imeiInputFree = document.getElementById('imeiInputFree');
+            imeiInputFree.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    lookupFreeIMEI();
+                }
+            });
+
+            // Handle Enter key for Calculator Input
+            const calculatorInput = document.getElementById('calculatorInput');
+            calculatorInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    calculateCheckDigit();
+                }
+            });
+
+            // Initialize Sound Muting
+            const muteSounds = document.getElementById('muteSounds');
+            muteSounds.addEventListener('change', () => {
+                // Optional: Additional actions when sounds are muted/unmuted
+            });
+        });
+    </script>
+</body>
+</html>
