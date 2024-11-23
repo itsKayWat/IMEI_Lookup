@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMEI Lookup - README</title>
+    <!-- Google Fonts for Signature Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #1a1a2e; /* Dark Blue Shade */
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        .container {
+            background: rgba(26, 26, 46, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1, h2, h3, h4 {
+            color: #00d2ff;
+            text-shadow: 0 0 10px #00d2ff;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        a {
+            color: #00d2ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #3a7bd5;
+            text-decoration: underline;
+        }
+
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            opacity: 0.7;
+            font-size: 0.9em;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .button-container a {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 1.2em;
+            color: #ffffff;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .button-container a:hover {
+            background: #00d2ff;
+            transform: scale(1.05);
+        }
+
+        .agreement {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(40, 40, 60, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+        }
+
+        .agreement h2 {
+            margin-bottom: 10px;
+        }
+
+        .agreement p {
+            margin-bottom: 10px;
+        }
+
+        .agreement ul {
+            list-style-type: square;
+            margin-left: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                max-width: 95%;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            h3 {
+                font-size: 1.5em;
+            }
+
+            p, li {
+                font-size: 1em;
+            }
+
+            .button-container a {
+                width: 100%;
+                padding: 12px 0;
+            }
+
+            .agreement {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IMEI Lookup</h1>
+
+        <h2>Purpose</h2>
+        <p>The IMEI Lookup tool is designed to provide users with comprehensive information about mobile devices using their IMEI numbers. Whether you're verifying a device's authenticity, checking warranty status, or assessing carrier compatibility, this tool offers a robust solution for all your IMEI-related inquiries.</p>
+
+        <h2>Why It Was Created</h2>
+        <p>In an era where mobile devices are integral to daily life, ensuring the legitimacy and functionality of these devices is paramount. The tool was developed to streamline the process of IMEI verification, offering users a reliable and efficient means to access detailed device information without the need for multiple platforms or services.</p>
+
+        <h2>Features</h2>
+        <ul>
+            <li><strong>Paid IMEI Lookup:</strong> Access advanced device information such as carrier status, lock status, warranty details, and more.</li>
+            <li><strong>Free IMEI Lookup:</strong> Perform basic IMEI checks at no cost by redirecting to trusted external sources.</li>
+            <li><strong>IMEI Calculator:</strong> Calculate and verify the check digit of a 14-digit IMEI using the Luhn formula.</li>
+            <li><strong>Account Management:</strong> View and manage account details securely.</li>
+            <li><strong>Bulk IMEI Search:</strong> Conduct large-scale IMEI searches efficiently.</li>
+            <li><strong>Search History:</strong> Track and review past IMEI lookup activities.</li>
+            <li><strong>Available Services:</strong> Browse and search through the range of available IMEI lookup services.</li>
+            <li><strong>User Authentication:</strong> Secure access via PIN verification to protect sensitive information.</li>
+            <li><strong>Dark Mode Theme:</strong> A sleek and modern dark interface for enhanced user experience.</li>
+        </ul>
+
+        <h2>How It Works</h2>
+        <p>The tool operates by allowing users to enter a 15-digit IMEI number, which is then processed to retrieve detailed information about the device. Depending on the selected service, users can perform various checks ranging from basic authenticity to comprehensive carrier and warranty assessments. The tool also offers additional functionalities like bulk searches and history tracking to cater to both individual and business needs.</p>
+
+        <h2>How to Use</h2>
+        <ol>
+            <li><strong>Access the Tool:</strong> Navigate to the IMEI Lookup page on the GVTech Hub website.</li>
+            <li><strong>Enter Your IMEI:</strong> Input the 15-digit IMEI number of the device you wish to inquire about.</li>
+            <li><strong>Select a Service:</strong> Choose from a range of services depending on the information you need.</li>
+            <li><strong>Submit the Query:</strong> Click the "Lookup" button to initiate the search.</li>
+            <li><strong>View Results:</strong> The tool will display the retrieved information in a user-friendly format.</li>
+            <li><strong>Additional Options:</strong> Utilize features like the IMEI calculator, bulk search, or view search history as needed.</li>
+        </ol>
+
+        <h2>Example Usage</h2>
+        <p><strong>Scenario:</strong> You've recently purchased a second-hand smartphone and want to verify its authenticity and check if it's locked to a specific carrier.</p>
+        <ol>
+            <li>Access the IMEI Lookup tool on the GVTech Hub website.</li>
+            <li>Enter the 15-digit IMEI number found on the device.</li>
+            <li>Select the "APPLE: Carrier & Lock Status & FMI" service from the dropdown menu.</li>
+            <li>Click the "Lookup" button to retrieve detailed information.</li>
+            <li>Review the results to ensure the device is genuine and not locked to any unauthorized carriers.</li>
+        </ol>
+
+        <h2>Security and Privacy</h2>
+        <p>The tool employs robust security measures, including PIN authentication and data encryption, to ensure that user information remains secure. All IMEI data is processed in compliance with privacy regulations to protect user privacy.</p>
+
+        <h2>Support</h2>
+        <p>If you encounter any issues or have questions about using the IMEI Lookup tool, please reach out to our support team through the <a href="#">Contact</a> page on the GVTech Hub website.</p>
+
+        <div class="button-container">
+            <a href="https://sites.google.com/view/gvtechhub-kb/technician/imei-lookup?authuser=0" target="_blank" rel="noopener noreferrer" aria-label="Go to IMEI Lookup Tool">Go to IMEI Lookup Tool</a>
+        </div>
+
+        <div class="agreement">
+            <h2>Usage Agreement</h2>
+            <p>The IMEI Lookup tool is strictly for internal use only. Usage of this tool is subject to the following terms:</p>
+            <ul>
+                <li><strong>Permission-Based Access:</strong> Only individuals granted explicit permission by the developer may use this tool.</li>
+                <li><strong>Prohibited Actions:</strong> Users are prohibited from copying, modifying, distributing, tampering with, adjusting, viewing, analyzing, or interpreting the software in any unauthorized manner.</li>
+                <li><strong>Authorized Use:</strong> The tool must be utilized solely in the manner outlined by the developer. Any deviation requires prior approval.</li>
+                <li><strong>No Redistribution:</strong> The software, including its source code and executable forms, must not be shared with third parties without explicit consent.</li>
+                <li><strong>Confidentiality:</strong> Users must maintain the confidentiality of the tool and any associated documentation.</li>
+                <li><strong>Compliance:</strong> All users must comply with these terms to continue using the tool. Unauthorized use may result in access termination and potential legal action.</li>
+            </ul>
+            <p>By using the IMEI Lookup tool, you agree to adhere strictly to these terms. Any violation may lead to the revocation of access permissions and legal consequences.</p>
+        </div>
+
+        <div class="signature">
+            &copy; GVTech Hub 2024 | Widget Made by Chris Loetz
+        </div>
+    </div>
+</body>
+</html>
