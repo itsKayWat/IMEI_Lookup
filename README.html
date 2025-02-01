@@ -146,6 +146,47 @@
                 padding: 15px;
             }
         }
+
+        .support-section {
+            background: rgba(26, 26, 46, 0.95);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+        }
+
+        .developer-signature {
+            text-align: center;
+        }
+
+        .coffee-options {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .coffee-btn {
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .coffee-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+        }
+
+        .dev-signature {
+            font-family: 'Dancing Script', cursive;
+            color: #00d2ff;
+            margin-top: 1.5rem;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -220,6 +261,20 @@
 
         <div class="signature">
             &copy; GVTech Hub 2024 | Widget Made by Chris Loetz
+        </div>
+
+        <div class="support-section">
+            <h2>Support the Developer</h2>
+            <div class="developer-signature">
+                <p>👋 Hi, I'm KayWat! I created both this tool and this documentation page to help developers like you.</p>
+                <p>If you find this tool valuable, consider supporting my work:</p>
+                <div class="coffee-options">
+                    <a href="https://www.paypal.com/donate/?hosted_button_id=J3ABMPG6MQF3L&custom=1coffee" class="coffee-btn">☕ One Coffee ($6)</a>
+                    <a href="https://www.paypal.com/donate/?hosted_button_id=J3ABMPG6MQF3L&custom=2coffees" class="coffee-btn">☕☕ Two Coffees ($12)</a>
+                    <a href="https://www.paypal.com/donate/?hosted_button_id=J3ABMPG6MQF3L&custom=3coffees" class="coffee-btn">☕☕☕ Three Coffees ($24)</a>
+                </div>
+                <p class="dev-signature">Made with ❤️ by KayWat</p>
+            </div>
         </div>
     </div>
 </body>
